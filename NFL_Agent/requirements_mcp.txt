@@ -1,0 +1,6 @@
+openai-agents>=0.4,<1.0
+mcp[cli]
+polars>=1.5
+nflreadpy
+pandas>1.5 
+uvicorn>=0.30  # only needed if you want HTTP
