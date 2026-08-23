@@ -1,6 +1,13 @@
-openai-agents>=0.4,<1.0
-mcp[cli]
+# Convenience export for pip-only environments.
+# pyproject.toml + uv.lock are the source of truth -- prefer `uv sync`.
+# Keep this file in step with the [project.dependencies] table.
+mcp[cli]>=1.27.0
+nflreadpy>=0.1.5
+numpy>=1.26
+openai-agents>=0.14.2
 polars>=1.5
-nflreadpy
-pandas>1.5 
-uvicorn>=0.30  # only needed if you want HTTP
+streamlit>=1.56.0
+uvicorn>=0.44.0
+
+# Development only
+pytest>=8.0

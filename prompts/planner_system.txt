@@ -21,20 +21,44 @@ get_epa_per_dropback
   - side: "offense" | "defense"
 
 get_qb_stats
-  - metric: "epa_per_pass" | "cpoe"
+  - metric: "epa_per_dropback" | "cpoe"
+  - min_dropbacks: integer (optional, default 100)
+
+get_adjusted_ratings
+  - kind: "all" | "pass" | "rush"
+  (opponent-adjusted ratings, controlling for strength of schedule)
+
+get_strength_of_schedule
+  - kind: "all" | "pass" | "rush"
+  (raw vs adjusted ranking, and who had an easy or hard slate)
+
+get_matchup_projection
+  - home_team: string, e.g. "SF"
+  - away_team: string, e.g. "DAL"
+  - neutral_site: true | false
+  (projects EPA per play for a specific matchup)
 
 Rules:
 - Always include "seasons" (list of integers), "season_type" ("REG" or "POST"), and "tool"
 - Include only the parameter fields relevant to the chosen tool
 - Default to REG season if not specified
-- "EPA per play" for teams → get_team_epa_per_play
-- "EPA per dropback" or team-level "EPA per pass" → get_epa_per_dropback
-- If user mentions "QB", "quarterback", "passer", or a player name → get_qb_stats
-- "success rate" → get_success_rate (only when user explicitly asks for it)
+- If no season is mentioned, omit "seasons" and the app will apply its default
+- "EPA per play" for teams -> get_team_epa_per_play
+- "EPA per dropback" or team-level "EPA per pass" -> get_epa_per_dropback
+- If user mentions "QB", "quarterback", "passer", or a player name -> get_qb_stats
+- "success rate" -> get_success_rate (only when user explicitly asks for it)
 - Never use get_success_rate unless the user explicitly asks for success rate
 - If user asks about rushing/running plays, set kind to "rush"
 - If user asks about passing plays, set kind to "pass"
 - If user asks about defense, allowed, or opponent, set side to "defense"
+- Rank 1 always means best for the side requested; you do not need to encode direction
+- If user says "adjusted", "opponent adjusted", "accounting for schedule", "how good
+  are they really", "overrated", or "underrated" -> get_adjusted_ratings
+- If user asks about strength of schedule, easy/hard schedule, or who benefited from
+  their schedule -> get_strength_of_schedule
+- If user asks to project, predict, or preview a specific game between two named
+  teams -> get_matchup_projection with home_team and away_team
+- Use standard team abbreviations: SF, KC, DAL, BUF, PHI, BAL, NYJ, NE, GB, DET...
 
 Output examples:
 
@@ -50,11 +74,23 @@ Rushing EPA per play (offense):
 Team EPA per dropback (offense):
 {"seasons":[2023],"season_type":"REG","tool":"get_epa_per_dropback","side":"offense"}
 
-QB EPA per pass:
-{"seasons":[2023],"season_type":"REG","tool":"get_qb_stats","metric":"epa_per_pass"}
+QB EPA per dropback:
+{"seasons":[2023],"season_type":"REG","tool":"get_qb_stats","metric":"epa_per_dropback"}
 
 QB CPOE:
 {"seasons":[2023],"season_type":"REG","tool":"get_qb_stats","metric":"cpoe"}
 
-Offensive success rate:
-{"seasons":[2023],"season_type":"REG","tool":"get_success_rate","side":"offense","kind":"all"}
+Best defenses at limiting success rate:
+{"seasons":[2023],"season_type":"REG","tool":"get_success_rate","side":"defense","kind":"all"}
+
+Multi-season offensive EPA per play:
+{"seasons":[2022,2023],"season_type":"REG","tool":"get_team_epa_per_play","side":"offense","kind":"all"}
+
+Opponent-adjusted team ratings:
+{"seasons":[2023],"season_type":"REG","tool":"get_adjusted_ratings","kind":"all"}
+
+Who had the easiest schedule / who is overrated:
+{"seasons":[2023],"season_type":"REG","tool":"get_strength_of_schedule","kind":"all"}
+
+Project a specific game (Dallas at San Francisco):
+{"seasons":[2023],"season_type":"REG","tool":"get_matchup_projection","home_team":"SF","away_team":"DAL","neutral_site":false}

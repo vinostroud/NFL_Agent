@@ -1,14 +1,25 @@
 [project]
 name = "nfl-agent"
 version = "0.1.0"
-description = "Add your description here"
+description = "Natural-language analytics agent over nflfastR play-by-play data (Streamlit + MCP + Polars)"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "mcp[cli]>=1.27.0",
     "nflreadpy>=0.1.5",
+    "numpy>=1.26",
     "openai-agents>=0.14.2",
     "polars>=1.5",
     "streamlit>=1.56.0",
     "uvicorn>=0.44.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
